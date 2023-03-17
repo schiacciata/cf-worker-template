@@ -20,6 +20,7 @@ class KVRoute extends Route {
 			context: handleDTO.context,
 			env: handleDTO.env,
 			kvName: this.kvName,
+			debug: handleDTO.config.debug,
 		});
 
 		return !!this.kvStorage;
