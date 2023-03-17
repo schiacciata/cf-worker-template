@@ -9,11 +9,13 @@ module.exports = {
   entry: files.concat([path.join(__dirname, './src/index.ts')]),
   /*devtool: 'inline-source-map',*/
   module: {
-    rules: [{
-      test: /\.tsx?$/,
-      use: 'ts-loader',
-      exclude: /node_modules/
-    }]
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        options: { allowTsInNodeModules: true }
+      }
+    ]
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json']
