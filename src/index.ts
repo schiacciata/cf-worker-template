@@ -18,7 +18,7 @@ export default {
 			request,
 			env,
 			context: ctx,
-			config,
+			config: config.getConfig(),
 		});
 	},
 };
