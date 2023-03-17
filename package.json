@@ -16,5 +16,8 @@
     "start": "wrangler dev",
     "deploy": "wrangler publish",
     "build": "webpack --progress --mode none"
+  },
+  "dependencies": {
+    "@schiacciata/cf-workers-storage": "github:schiacciata/cf-workers-storage"
   }
 }
