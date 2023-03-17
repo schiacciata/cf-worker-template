@@ -9,6 +9,10 @@ abstract class Configuration {
     }
   
     public abstract setUp(env: Env): void;
+
+    public getConfig(): TConfig {
+      return this.config;
+    };
   }
   
 
