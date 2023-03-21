@@ -12,7 +12,7 @@ class NotFoundRoute extends Route {
     };
 
     handle(handleDTO: InterceptOptions): Response | Promise<Response> {
-        return new Response("Page not found", {
+        return new Response(`${new URL(handleDTO.request.url).pathname} (${handleDTO.request.method}) not found`, {
             status: 404,
         });
     }
