@@ -18,6 +18,7 @@
     "build": "webpack --progress --mode none"
   },
   "dependencies": {
+    "@schiacciata/cf-workers-auth": "github:schiacciata/cf-workers-auth",
     "@schiacciata/cf-workers-storage": "github:schiacciata/cf-workers-storage"
   }
 }
