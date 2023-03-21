@@ -4,11 +4,12 @@ compatibility_date = "2023-03-16"
 
 kv_namespaces = [
     { "id" = "", "binding" = "MY_KV_STORAGE", "preview_id" = "" },
-    { "id" = "", "binding" = "CUSTOM_KV", "preview_id" = "" },
 ]
 
 [vars]
 ENV = "DEVELOPMENT"
+JWTsecret = "TEST"
 
 [env.production.vars]
 ENV = "PRODUCTION"
+JWTsecret = "@@@@@@@"
