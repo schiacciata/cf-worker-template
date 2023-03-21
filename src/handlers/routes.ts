@@ -23,6 +23,7 @@ class RoutesHandler extends Handler {
                     path: new Path(),
                     method: 'GET',
                     handle: () => new Response('Module not found'),
+                    error: () => new Response('Module not found'),
                 };
 
                 const data: Route = module.exports.route; 
