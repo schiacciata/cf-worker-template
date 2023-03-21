@@ -1,4 +1,4 @@
-import { InterceptOptions } from "../../types/Router";
+import { RouteHandleOptions } from "../../types/Route";
 import KVBaseRoute from "./kv.base";
 
 class KVGetRoute extends KVBaseRoute {
@@ -6,13 +6,13 @@ class KVGetRoute extends KVBaseRoute {
         super("GET");
     };
 
-    async handle(handleDTO: InterceptOptions): Promise<Response> {
+    async handle(handleDTO: RouteHandleOptions): Promise<Response> {
 		this.setUpKV(handleDTO);
 		if (!this.kvStorage) return new Response("Could not setup kv", {
 			status: 500,
 		});
 
-		const key = handleDTO.request.url;
+		const { key } = this.path.params;
 		const result = await this.kvStorage.get({
 			key,
 			//kvName: newKV

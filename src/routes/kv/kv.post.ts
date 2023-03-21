@@ -1,4 +1,4 @@
-import { InterceptOptions } from "../../types/Router";
+import { RouteHandleOptions } from "../../types/Route";
 import KVBaseRoute from "./kv.base";
 
 type PostBody = {
@@ -10,13 +10,13 @@ class KVPostRoute extends KVBaseRoute {
         super("POST");
     };
 
-    async handle(handleDTO: InterceptOptions): Promise<Response> {
+    async handle(handleDTO: RouteHandleOptions): Promise<Response> {
 		this.setUpKV(handleDTO);
 		if (!this.kvStorage) return new Response("Could not setup kv", {
 			status: 500,
 		});
 
-		const key = handleDTO.request.url;
+		const { key } = this.path.params;
 		let data: PostBody = {};
 
 		try {
