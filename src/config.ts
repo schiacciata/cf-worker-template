@@ -3,11 +3,21 @@ import { Env } from "./types/Env";
 
 export class Config extends Configuration {
     constructor() {
-        super({/* base config here */});
+        //Base/Static config
+        super({
+            users: [
+                {
+                    username: 'admin',
+                    password: 'admin',
+                }
+            ],
+            JWTSecret: '',
+        });
     };
 
     public setUp(env: Env): void {
         this.config.debug = env.env !== "PRODUCTION";
+        this.config.JWTSecret = env.JWTsecret || this.randomString(100);
     };
   }
 
