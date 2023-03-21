@@ -2,21 +2,22 @@ import { KVManager } from "@schiacciata/cf-workers-storage";
 import Path from "../../core/Path";
 import Route from "../../core/Route";
 import { HTTPMethod } from "../../types/Route";
-import { InterceptOptions } from "../../types/Router";
+import { RouteHandleOptions } from "../../types/Route";
 
 abstract class KVBaseRoute extends Route {
 	kvName: string;
 	kvStorage?: KVManager;
     constructor(method: HTTPMethod) {
         super({
-            path: new Path().setUp("/kv(.*)"),
+            path: new Path(/^\/kv\/(?<key>[^/]+)$/),
             method,
+			auth: true,
         });
 
 		this.kvName = "MY_KV_STORAGE";
     };
 
-	public setUpKV(handleDTO: InterceptOptions) {
+	public setUpKV(handleDTO: RouteHandleOptions) {
 		this.kvStorage = new KVManager({
 			context: handleDTO.context,
 			env: handleDTO.env,
@@ -27,7 +28,7 @@ abstract class KVBaseRoute extends Route {
 		return !!this.kvStorage;
 	}
 
-    async handle(handleDTO: InterceptOptions): Promise<Response> {
+    async handle(handleDTO: RouteHandleOptions): Promise<Response> {
         throw new Error("Not implemented");
     }
 }
