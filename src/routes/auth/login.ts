@@ -37,9 +37,10 @@ class LoginRoute extends AuthBaseRoute {
         }
         
         if (!jwt) {
-            return new Response('Unauthorized', { status: 401 });
+            return this.error('Unauthorized', 401 );
         };
 
+        handleDTO.logger.success(`User "${body.username}" logged in!`);
         return Response.json({ token: jwt });
     }
 }
