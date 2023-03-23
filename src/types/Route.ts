@@ -6,7 +6,7 @@ export type HTTPMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" 
 
 export type RouteHandleOptions = InterceptOptions & {
     authenticator?: BearerAuthenticator,
-    error?: string,
+    error?: string | unknown,
 }
 
 export type RouteOptions = {
