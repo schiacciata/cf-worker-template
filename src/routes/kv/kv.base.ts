@@ -18,7 +18,7 @@ abstract class KVBaseRoute extends Route {
     };
 
 	public setUpKV(handleDTO: RouteHandleOptions) {
-		handleDTO.logger.log(`Setting up kv ${this.kvName}`);
+		handleDTO.logger.info(`Setting up kv ${this.kvName}`);
 		
 		this.kvStorage = new KVManager({
 			context: handleDTO.context,
