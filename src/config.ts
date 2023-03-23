@@ -12,6 +12,7 @@ export class Config extends Configuration {
                 }
             ],
             JWTSecret: '',
+            JWTExpirationInS: 7200,
         });
     };
 
