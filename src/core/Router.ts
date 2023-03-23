@@ -1,5 +1,6 @@
 import { BearerAuthenticator } from "@schiacciata/cf-workers-auth";
 import Route from "../core/Route";
+import { HTTPMethod } from "../types/Route";
 import { InterceptOptions, RouterOptions } from "../types/Router";
 
 class Router {
@@ -16,7 +17,7 @@ class Router {
 
     private getRoute(request: Request): Route | undefined {
         return this.routes.find(route => route.path.test(request) && route.method === request.method);
-    }
+    };
 
     private setUpAuthenticator(handleDTO: InterceptOptions) {
 		this.authenticator = new BearerAuthenticator({
@@ -26,14 +27,23 @@ class Router {
 		});
 
 		return !!this.authenticator;
-	}
+	};
+
+    public getErrorRoute(errorCode: number, matchMethod?: HTTPMethod) {
+        const condition = (r: Route): boolean => {
+            if (matchMethod && r.method !== matchMethod) return false;
+            return r.errorCode === errorCode;
+        };
+        
+        return this.routes.find(condition);
+    }
 
     async intercept(options: InterceptOptions): Promise<Response> {
         this.setUpAuthenticator(options);
 
         const route = this.getRoute(options.request);
         if (!route) {
-            const notFound = this.routes.find(r => r.errorCode === 404);
+            const notFound = this.getErrorRoute(404);
             if (notFound) return notFound.handle(options);
 
             return new Response("Route not found");
