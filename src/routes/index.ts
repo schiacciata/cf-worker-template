@@ -11,6 +11,8 @@ class MainRoute extends Route {
     };
 
     handle(handleDTO: InterceptOptions): Response | Promise<Response> {
+        handleDTO.logger.log("Hello World!");
+        
         return new Response("Hello World!");
     }
 }
