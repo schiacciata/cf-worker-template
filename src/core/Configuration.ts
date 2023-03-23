@@ -22,8 +22,18 @@ abstract class Configuration {
           result += characters.charAt(Math.floor(Math.random() * charactersLength));
       }
       return result;
-  };
-  }
+    };
+
+    public print() {
+      return Object.entries(this.config)
+        .map(([key, value]) => {
+          let str = `config.${key} = {{value}} (${typeof value})`;
+
+          if (typeof value !== "object") return str.replace('{{value}}', value.toString());
+          return str.replace('{{value}}', JSON.stringify(value));
+        });
+    }
+}
   
 
 export default Configuration;
