@@ -8,15 +8,14 @@ class KVGetRoute extends KVBaseRoute {
 
     async handle(handleDTO: RouteHandleOptions): Promise<Response> {
 		this.setUpKV(handleDTO);
-		if (!this.kvStorage) return new Response("Could not setup kv", {
-			status: 500,
-		});
+		if (!this.kvStorage) return this.error("Could not setup kv", 500);
 
 		const { key } = this.path.params;
 		const result = await this.kvStorage.get({
 			key,
 			//kvName: newKV
 		});
+		
 		if (!result) return new Response(`Data in KV with key ${key} not found`, {
             status: 404,
         });

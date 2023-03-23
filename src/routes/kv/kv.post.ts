@@ -12,22 +12,16 @@ class KVPostRoute extends KVBaseRoute {
 
     async handle(handleDTO: RouteHandleOptions): Promise<Response> {
 		this.setUpKV(handleDTO);
-		if (!this.kvStorage) return new Response("Could not setup kv", {
-			status: 500,
-		});
+		if (!this.kvStorage) return this.error("Could not setup kv", 500);
 
 		const { key } = this.path.params;
 		let data: PostBody = {};
 
 		try {
 			data = await handleDTO.request.json();
-			if (!data.value) return new Response(`Please provide a value`, {
-				status: 400,
-			});
+			if (!data.value) return this.error(`Please provide a value`, 400);
 		} catch (error) {
-			return new Response(`Please provide a valid body`, {
-				status: 400,
-			});
+			return this.error(`Please provide a valid body`, 400);
 		}
 
 		this.kvStorage.set({
