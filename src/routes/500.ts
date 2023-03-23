@@ -11,6 +11,8 @@ export class ServerErrorRoute extends Route {
     };
 
     handle(handleDTO: RouteHandleOptions): Response | Promise<Response> {
+        handleDTO.logger.error('Your cloudflare worker has encountered an error:', handleDTO.error);
+        
         return new Response(`An error happened, please try again`, {
             status: 500,
         });
