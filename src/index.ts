@@ -43,7 +43,10 @@ export default {
 				status: 500,
 			});
 
-			return await errorRoute.handle(interceptParams);
+			return await errorRoute.handle({
+				...interceptParams,
+				error,
+			});
 		};
 	},
 };
