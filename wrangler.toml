@@ -10,6 +10,11 @@ kv_namespaces = [
 ENV = "DEVELOPMENT"
 JWTsecret = "TEST"
 
+[env.production]
+kv_namespaces = [
+    { "id" = "", "binding" = "MY_KV_STORAGE", "preview_id" = "" },
+]
+
 [env.production.vars]
 ENV = "PRODUCTION"
-JWTsecret = "@@@@@@@"
+JWTsecret = "SECRET"
