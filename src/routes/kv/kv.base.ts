@@ -18,6 +18,8 @@ abstract class KVBaseRoute extends Route {
     };
 
 	public setUpKV(handleDTO: RouteHandleOptions) {
+		handleDTO.logger.log(`Setting up kv ${this.kvName}`);
+		
 		this.kvStorage = new KVManager({
 			context: handleDTO.context,
 			env: handleDTO.env,
@@ -27,10 +29,6 @@ abstract class KVBaseRoute extends Route {
 
 		return !!this.kvStorage;
 	}
-
-    async handle(handleDTO: RouteHandleOptions): Promise<Response> {
-        throw new Error("Not implemented");
-    }
 }
 
 export default KVBaseRoute;
