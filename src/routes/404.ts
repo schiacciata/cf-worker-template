@@ -6,13 +6,15 @@ class NotFoundRoute extends Route {
     constructor() {
         super({
             path: new Path(),
-            method: "GET",
             errorCode: 404,
         });
     };
 
     handle(handleDTO: InterceptOptions): Response | Promise<Response> {
-        return new Response(`${new URL(handleDTO.request.url).pathname} (${handleDTO.request.method}) not found`, {
+        const { pathname } = new URL(handleDTO.request.url);
+        handleDTO.logger.log('Could not find path', pathname);
+
+        return new Response(`${pathname} (${handleDTO.request.method}) not found`, {
             status: 404,
         });
     }
