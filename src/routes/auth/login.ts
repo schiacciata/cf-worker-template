@@ -1,3 +1,4 @@
+import { Payload } from "@schiacciata/cf-workers-auth/src/types/BearerAuthenticator";
 import { User } from "../../types/Config";
 import { RouteHandleOptions } from "../../types/Route";
 import AuthBaseRoute from "./auth.base";
@@ -25,12 +26,23 @@ class LoginRoute extends AuthBaseRoute {
 
         let jwt: string | undefined;
         
+        
+        const payload: Payload & User = {
+            username: body.username,
+            password: body.password,
+        };
+
+        if (handleDTO.config.JWTExpirationInS) {
+            const now = Math.floor(Date.now() / 1000);
+            const timeFromNow = now + handleDTO.config.JWTExpirationInS;
+
+            handleDTO.logger.info(`The token will expire at`, new Date(timeFromNow*1000).toLocaleString());
+            payload.exp = timeFromNow;
+        };
+
         try {
             jwt = await handleDTO.authenticator.login<User>({
-                payload: {
-                    username: body.username,
-                    password: body.password,
-                }
+                payload,
             });
         } catch (error) {
             return this.error('Error logging in: ' + error, 400)
