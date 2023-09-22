@@ -14,11 +14,13 @@ export class Config extends Configuration {
             JWTSecret: '',
             JWTExpirationInS: 7200,
         });
+
+        this.config.JWTSecret = this.randomString(100);
     };
 
     public setUp(env: Env): void {
         this.config.debug = env.env !== "PRODUCTION";
-        this.config.JWTSecret = env.JWTsecret || this.randomString(100);
+        this.config.JWTSecret = env.JWTsecret;
     };
   }
 
