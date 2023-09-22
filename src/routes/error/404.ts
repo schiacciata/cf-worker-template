@@ -12,7 +12,7 @@ class NotFoundRoute extends Route {
 
     handle(handleDTO: RouteHandleOptions): Response | Promise<Response> {
         const { pathname } = new URL(handleDTO.request.url);
-        handleDTO.logger.log('Could not find path', pathname);
+        handleDTO.logger.info('Could not find path', pathname);
 
         return new Response(`${pathname} (${handleDTO.request.method}) not found`, {
             status: 404,
