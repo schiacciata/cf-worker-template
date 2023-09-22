@@ -16,7 +16,8 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler publish",
-    "build": "webpack --progress --mode none"
+    "build": "webpack --progress --mode none",
+    "dev": "npm run build && npm run start"
   },
   "dependencies": {
     "@schiacciata/cf-workers-auth": "github:schiacciata/cf-workers-auth",
