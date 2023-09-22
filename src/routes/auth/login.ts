@@ -1,6 +1,6 @@
 import { Payload } from "@schiacciata/cf-workers-auth/src/types/BearerAuthenticator";
-import { User } from "../../types/Config";
-import { RouteHandleOptions } from "../../types/Route";
+import { User } from "@/types/Config";
+import { RouteHandleOptions } from "@/types/Route";
 import AuthBaseRoute from "./auth.base";
 
 type LoginPost = {
@@ -20,16 +20,16 @@ class LoginRoute extends AuthBaseRoute {
         try {
             body = await handleDTO.request.json();
             if (!body.username || !body.password) return this.error('Missing username or password');
+
+            if (!handleDTO.config.users.find((u) => u.username == body.username && u.password == body.password)) return this.error("Invalid credentials");
         } catch (error) {
             return this.error('Invalid body');
         };
 
         let jwt: string | undefined;
         
-        
-        const payload: Payload & User = {
+        const payload: Payload & { username: string; } = {
             username: body.username,
-            password: body.password,
         };
 
         if (handleDTO.config.JWTExpirationInS) {
@@ -41,9 +41,7 @@ class LoginRoute extends AuthBaseRoute {
         };
 
         try {
-            jwt = await handleDTO.authenticator.login<User>({
-                payload,
-            });
+            jwt = await handleDTO.authenticator.sign(payload);
         } catch (error) {
             return this.error('Error logging in: ' + error, 400)
         }
