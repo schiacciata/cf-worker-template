@@ -1,6 +1,6 @@
-import Path from "../core/Path";
-import Route from "../core/Route";
-import { RouteHandleOptions } from "../types/Route";
+import Path from "@/core/Path";
+import Route from "@/core/Route";
+import { RouteHandleOptions } from "@/types/Route";
 
 export class ServerErrorRoute extends Route {
     constructor() {

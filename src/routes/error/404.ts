@@ -1,6 +1,6 @@
-import Path from "../core/Path";
-import Route from "../core/Route";
-import { InterceptOptions } from "../types/Router";
+import Path from "@/core/Path";
+import Route from "@/core/Route";
+import { RouteHandleOptions } from "@/types/Route";
 
 class NotFoundRoute extends Route {
     constructor() {
@@ -10,7 +10,7 @@ class NotFoundRoute extends Route {
         });
     };
 
-    handle(handleDTO: InterceptOptions): Response | Promise<Response> {
+    handle(handleDTO: RouteHandleOptions): Response | Promise<Response> {
         const { pathname } = new URL(handleDTO.request.url);
         handleDTO.logger.log('Could not find path', pathname);
 
