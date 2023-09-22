@@ -22,7 +22,6 @@ class Router {
     private setUpAuthenticator(handleDTO: InterceptOptions) {
 		this.authenticator = new BearerAuthenticator({
 			debug: handleDTO.config.debug,
-            users: handleDTO.config.users,
             secret: handleDTO.config.JWTSecret,
 		});
 
