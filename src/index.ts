@@ -2,7 +2,6 @@ import { Logger } from "@schiacciata/logger/index";
 import config from "./config";
 import Router from "./core/Router";
 import RoutesHandler from "./handlers/routes";
-import { ServerErrorRoute } from "./routes/500";
 import { Env } from "./types/Env";
 
 const router = new Router({})
@@ -38,7 +37,7 @@ export default {
 		try {
 			return await router.intercept(interceptParams);
 		} catch (error) {
-			const errorRoute: ServerErrorRoute | undefined = await router.getErrorRoute(500);
+			const errorRoute = await router.getErrorRoute(500);
 			if (!errorRoute) return new Response('An error happened: ' + error, {
 				status: 500,
 			});
