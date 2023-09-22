@@ -1,5 +1,6 @@
 const path = require('path');
 const glob = require('glob');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const files = glob.sync('./src/routes/**/*.ts')
 .map(f => path.join(__dirname, f));
@@ -18,7 +19,11 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.json']
+    extensions: ['.ts', '.tsx', '.js', '.json'],
+    plugins: [new TsconfigPathsPlugin({
+      configFile: './tsconfig.json',
+      extensions: ['.ts', '.js']
+    })]
   },
   output: {
     filename: '[name].js',
