@@ -1,7 +1,8 @@
-import { BearerAuthenticator } from "@schiacciata/cf-workers-auth";
+import UserModel from "@/models/user";
 import Route from "../core/Route";
 import { HTTPMethod } from "../types/Route";
 import { InterceptOptions, RouterOptions } from "../types/Router";
+import { db } from "./db";
 
 class Router {
     routes: Route[];
@@ -35,6 +36,20 @@ class Router {
         return this.routes.find(condition);
     }
 
+    private async getUserFromRequest(interceptOptions: InterceptOptions) {
+        const token = interceptOptions.authenticator.getTokenFromRequest(interceptOptions.request);
+        if (!token) return new Error('Token not provided');
+
+        const payload = interceptOptions.authenticator.getPayload(token);
+        if (!payload) return new Error('No token payload found');
+
+        const user = await new UserModel(db(interceptOptions.env))
+            .find(payload.id);
+
+        if (!user) return new Error("User not found");
+        return user;
+    }
+
     async intercept(interceptOptions: InterceptOptions): Promise<Response> {
         const route = this.getRoute(interceptOptions.request);
         if (!route) {
@@ -50,7 +65,23 @@ class Router {
             status: 401,
         });
 
-        return await route.handle(interceptOptions);
+        if (!route.adminOnly && !route.fetchUserFromDB) return await route.handle(interceptOptions);
+
+        const data = await this.getUserFromRequest(interceptOptions);
+        if (data instanceof Error) return new Response(data.message);
+
+        const handleData = {
+            ...interceptOptions,
+            user: data,
+        };
+
+        if (!route.adminOnly) return await route.handle(handleData);
+
+        if (!data.admin) return new Response("You're not authorized", {
+            status: 401,
+        });
+        
+        return await route.handle(handleData);
     }
 }
 
