@@ -14,14 +14,17 @@
   },
   "private": true,
   "scripts": {
-    "start": "wrangler dev",
+    "start": "wrangler dev --remote",
     "deploy": "wrangler deploy",
-    "build": "webpack --progress --mode none",
-    "dev": "npm run build && npm run start"
+    "build": "webpack --progress --mode none && npm run db:migrate",
+    "db:migrate": "wrangler d1 migrations apply template-worker-db",
+    "db:tables": "wrangler d1 execute template-worker-db --command \"SELECT name FROM sqlite_schema WHERE type ='table'\""
   },
   "dependencies": {
     "@schiacciata/cf-workers-auth": "github:schiacciata/cf-workers-auth",
     "@schiacciata/cf-workers-storage": "github:schiacciata/cf-workers-storage",
-    "@schiacciata/logger": "github:schiacciata/logger"
+    "@schiacciata/logger": "github:schiacciata/logger",
+    "kysely": "^0.26.3",
+    "kysely-d1": "^0.3.0"
   }
 }
