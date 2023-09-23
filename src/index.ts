@@ -3,6 +3,8 @@ import config from "./config";
 import Router from "./core/Router";
 import RoutesHandler from "./handlers/routes";
 import { Env } from "./types/Env";
+import { ServerErrorRoute } from "./routes/error/500";
+import { BearerAuthenticator } from "@schiacciata/cf-workers-auth";
 
 const router = new Router({})
 	.init(new RoutesHandler().handle());
@@ -26,18 +28,24 @@ export default {
 		const configuration = config.getConfig();
 		logger.options.isEnabled = configuration.debug || false;
 
+		const authenticator = new BearerAuthenticator({
+			debug: configuration.debug,
+			secret: configuration.JWTSecret,
+		});
+
 		const interceptParams = {
 			request,
 			env,
 			context: ctx,
 			config: configuration,
 			logger,
+			authenticator,
 		};
 
 		try {
 			return await router.intercept(interceptParams);
 		} catch (error) {
-			const errorRoute = await router.getErrorRoute(500);
+			const errorRoute: ServerErrorRoute | undefined = await router.getErrorRoute(500);
 			if (!errorRoute) return new Response('An error happened: ' + error, {
 				status: 500,
 			});
