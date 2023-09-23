@@ -1,7 +1,8 @@
 import { Payload } from "@schiacciata/cf-workers-auth/src/types/BearerAuthenticator";
-import { User } from "@/types/Config";
 import { RouteHandleOptions } from "@/types/Route";
 import AuthBaseRoute from "./auth.base";
+import { db } from "@/core/db";
+import UserModel from "@/models/user";
 
 type LoginPost = {
     username?: string;
@@ -11,25 +12,28 @@ type LoginPost = {
 class LoginRoute extends AuthBaseRoute {
     constructor() {
         super('/login');
+        this.method = 'POST';
     }
 
     async handle(handleDTO: RouteHandleOptions): Promise<Response> {
-        if (!handleDTO.authenticator) return this.error('Authenticator not setup', 500);
-        
         let body: LoginPost;
         try {
             body = await handleDTO.request.json();
             if (!body.username || !body.password) return this.error('Missing username or password');
-
-            if (!handleDTO.config.users.find((u) => u.username == body.username && u.password == body.password)) return this.error("Invalid credentials");
         } catch (error) {
             return this.error('Invalid body');
         };
 
+        const user = await new UserModel(db(handleDTO.env))
+            .findByCredentials(body.username, body.password);
+
+        if (!user) return this.error("Invalid credentials");
+
         let jwt: string | undefined;
         
-        const payload: Payload & { username: string; } = {
-            username: body.username,
+        const payload: Payload & Record<string, any> = {
+            username: user.username,
+            id: user.id,
         };
 
         if (handleDTO.config.JWTExpirationInS) {
