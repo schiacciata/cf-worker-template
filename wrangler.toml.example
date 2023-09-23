@@ -2,8 +2,14 @@ name = "cf-worker-template"
 main = "dist/main.js"
 compatibility_date = "2023-03-16"
 
+build = { command = "npm run build" }
+
 kv_namespaces = [
     { "id" = "", "binding" = "MY_KV_STORAGE", "preview_id" = "" },
+]
+
+d1_databases = [
+    { binding = "DB", database_name = "template-worker-db", database_id = "", preview_database_id = "" }
 ]
 
 [vars]
@@ -11,8 +17,13 @@ ENV = "DEVELOPMENT"
 JWTsecret = "TEST"
 
 [env.production]
+
 kv_namespaces = [
     { "id" = "", "binding" = "MY_KV_STORAGE", "preview_id" = "" },
+]
+
+d1_databases = [
+    { binding = "DB", database_name = "template-worker-db", database_id = "", preview_database_id = "" }
 ]
 
 [env.production.vars]
