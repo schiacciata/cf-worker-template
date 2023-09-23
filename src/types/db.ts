@@ -1,4 +1,4 @@
-import { ColumnType, Generated, Insertable, Kysely, Selectable, Updateable } from 'kysely'
+import { ColumnType, Generated, Kysely } from 'kysely'
 
 export interface Database {
   users: UsersTable,
