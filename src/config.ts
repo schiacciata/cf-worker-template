@@ -5,12 +5,6 @@ export class Config extends Configuration {
     constructor() {
         //Base/Static config
         super({
-            users: [
-                {
-                    username: 'admin',
-                    password: 'admin',
-                }
-            ],
             JWTSecret: '',
             JWTExpirationInS: 7200,
         });
