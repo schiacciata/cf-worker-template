@@ -15,16 +15,10 @@ class RoutesHandler extends Handler {
     }
 
     handle(): Route[] {
-
         return Object.values(require.cache)
 		    .filter((module) => this.isModule(module) && this.isRoute(module))
 		    .map((module) => {
-                if (!module) return {
-                    path: new Path(),
-                    method: 'GET',
-                    handle: () => new Response('Module not found'),
-                    error: () => new Response('Module not found'),
-                };
+                if (!module) return new Route({ path: new Path()});
 
                 const data: Route = module.exports.route; 
                 return data;
