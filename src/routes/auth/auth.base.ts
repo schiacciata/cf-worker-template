@@ -6,7 +6,6 @@ abstract class AuthBaseRoute extends Route {
     constructor(path: string) {
         super({
             path: new Path().setUp("/auth" + path),
-            method: 'POST',
         });
     };
 
