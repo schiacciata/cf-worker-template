@@ -1,4 +1,4 @@
-import { ColumnType, Generated, Kysely } from 'kysely'
+import { ColumnType, Generated, Kysely, Selectable } from 'kysely'
 
 export interface Database {
   users: UsersTable,
@@ -15,3 +15,5 @@ export interface UsersTable {
   admin: boolean;
   created_at: ColumnType<Date, string | undefined, never>;
 }
+
+export type User = Selectable<UsersTable>;
