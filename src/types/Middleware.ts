@@ -1,5 +1,5 @@
 import Route from "@/core/Route";
-import { InterceptOptions } from "./Router";
+import { RouteHandleOptions } from "./Route";
 
 export interface IMiddleware {
     handle(middlewareDTO: MiddlewareHandleOptions): Promise<Response | undefined>;
@@ -7,5 +7,5 @@ export interface IMiddleware {
 
 export type MiddlewareHandleOptions = {
     route: Route,
-    interceptOptions: InterceptOptions,
+    interceptOptions: RouteHandleOptions,
 }

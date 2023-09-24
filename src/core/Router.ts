@@ -1,6 +1,6 @@
 import UserModel from "@/models/user";
 import Route from "@/core/Route";
-import { HTTPMethod } from "@/types/Route";
+import { HTTPMethod, RouteHandleOptions } from "@/types/Route";
 import { InterceptOptions, RouterOptions } from "@/types/Router";
 import { db } from "./db";
 import ApiError from "@/errors/api";
@@ -66,7 +66,7 @@ class Router {
         return user;
     }
 
-    async intercept(interceptOptions: InterceptOptions): Promise<Response> {
+    async intercept(interceptOptions: RouteHandleOptions): Promise<Response> {
         const route = this.getRoute(interceptOptions.request);
         if (!route) {
             const notFound = this.getErrorRoute(404);
