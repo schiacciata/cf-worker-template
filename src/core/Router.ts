@@ -1,9 +1,6 @@
-import UserModel from "@/models/user";
 import Route from "@/core/Route";
 import { HTTPMethod, RouteHandleOptions } from "@/types/Route";
-import { InterceptOptions, RouterOptions } from "@/types/Router";
-import { db } from "./db";
-import ApiError from "@/errors/api";
+import { RouterOptions } from "@/types/Router";
 import NotFoundError from "@/errors/notfound";
 import Middleware from "./Middleware";
 import ServerError from "@/errors/server";
@@ -50,20 +47,6 @@ class Router {
         };
         
         return this.routes.find(condition);
-    }
-
-    private async getUserFromRequest(interceptOptions: InterceptOptions) {
-        const token = interceptOptions.authenticator.getTokenFromRequest(interceptOptions.request);
-        if (!token) return new ApiError('Token not provided');
-
-        const payload = interceptOptions.authenticator.getPayload(token);
-        if (!payload) return new ApiError('No token payload found');
-
-        const user = await new UserModel(db(interceptOptions.env))
-            .find(payload.id);
-
-        if (!user) return new ApiError("User not found", 401);
-        return user;
     }
 
     async intercept(interceptOptions: RouteHandleOptions): Promise<Response> {
