@@ -5,6 +5,7 @@ import RoutesHandler from "./handlers/routes";
 import { Env } from "./types/Env";
 import { ServerErrorRoute } from "./routes/error/500";
 import { BearerAuthenticator } from "@schiacciata/cf-workers-auth";
+import ServerError from "./errors/server";
 
 const router = new Router({})
 	.init(new RoutesHandler().handle());
@@ -46,9 +47,7 @@ export default {
 			return await router.intercept(interceptParams);
 		} catch (error) {
 			const errorRoute: ServerErrorRoute | undefined = await router.getErrorRoute(500);
-			if (!errorRoute) return new Response('An error happened: ' + error, {
-				status: 500,
-			});
+			if (!errorRoute) return new ServerError(error as Error, configuration.debug).toResponse();
 
 			return await errorRoute.handle({
 				...interceptParams,

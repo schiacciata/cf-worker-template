@@ -1,9 +1,10 @@
 import Path from "@/core/Path";
 import Route from "@/core/Route";
+import ServerError from "@/errors/server";
 import { RouteHandleOptions } from "@/types/Route";
 
 export type ServerErrorRouteHanleOptions = RouteHandleOptions & {
-    error?: string | unknown,
+    error?: Error | unknown,
 }
 
 export class ServerErrorRoute extends Route {
@@ -18,9 +19,7 @@ export class ServerErrorRoute extends Route {
         const error = handleDTO.error as Error;
         handleDTO.logger.error('Your cloudflare worker has encountered an error:', handleDTO.error);
         
-        return new Response(handleDTO.config.debug ? error.message : `An error happened, please try again`, {
-            status: 500,
-        });
+        return new ServerError(error, handleDTO.config.debug).toResponse();
     }
 }
 
