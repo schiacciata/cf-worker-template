@@ -2,8 +2,16 @@ const path = require('path');
 const glob = require('glob');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-const files = glob.sync('./src/routes/**/*.ts')
-.map(f => path.join(__dirname, f));
+const files = [];
+const handlers = glob.sync('./src/handlers/*.ts')
+  .map(f => f.split('.')[0]) //remove extension
+  .map(f => f.split(path.sep).pop()); //get file name
+
+handlers.forEach((handler) => {
+  glob.sync(`./src/${handler}/**/*.ts`)
+    .map(f => path.join(__dirname, f))
+    .forEach(f => files.push(f));
+});
 
 module.exports = {
 	context: __dirname,
