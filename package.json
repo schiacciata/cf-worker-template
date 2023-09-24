@@ -25,6 +25,7 @@
     "@schiacciata/cf-workers-storage": "github:schiacciata/cf-workers-storage",
     "@schiacciata/logger": "github:schiacciata/logger",
     "kysely": "^0.26.3",
-    "kysely-d1": "^0.3.0"
+    "kysely-d1": "^0.3.0",
+    "zod": "^3.22.2"
   }
 }
