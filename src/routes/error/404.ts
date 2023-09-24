@@ -1,5 +1,6 @@
 import Path from "@/core/Path";
 import Route from "@/core/Route";
+import NotFoundError from "@/errors/notfound";
 import { RouteHandleOptions } from "@/types/Route";
 
 class NotFoundRoute extends Route {
@@ -14,9 +15,7 @@ class NotFoundRoute extends Route {
         const { pathname } = new URL(handleDTO.request.url);
         handleDTO.logger.info('Could not find path', pathname);
 
-        return new Response(`${pathname} (${handleDTO.request.method}) not found`, {
-            status: 404,
-        });
+        return new NotFoundError(`${pathname} (${handleDTO.request.method}) not found`).toResponse();
     }
 }
 
