@@ -3,6 +3,9 @@ import Route from "../core/Route";
 import { HTTPMethod } from "../types/Route";
 import { InterceptOptions, RouterOptions } from "../types/Router";
 import { db } from "./db";
+import ApiError from "@/errors/api";
+import NotFoundError from "@/errors/notfound";
+import AuthenticationError from "@/errors/authentication";
 
 class Router {
     routes: Route[];
@@ -38,15 +41,15 @@ class Router {
 
     private async getUserFromRequest(interceptOptions: InterceptOptions) {
         const token = interceptOptions.authenticator.getTokenFromRequest(interceptOptions.request);
-        if (!token) return new Error('Token not provided');
+        if (!token) return new ApiError('Token not provided');
 
         const payload = interceptOptions.authenticator.getPayload(token);
-        if (!payload) return new Error('No token payload found');
+        if (!payload) return new ApiError('No token payload found');
 
         const user = await new UserModel(db(interceptOptions.env))
             .find(payload.id);
 
-        if (!user) return new Error("User not found");
+        if (!user) return new ApiError("User not found", 401);
         return user;
     }
 
@@ -56,19 +59,17 @@ class Router {
             const notFound = this.getErrorRoute(404);
             if (notFound) return notFound.handle(interceptOptions);
 
-            return new Response("Route not found");
+            return new NotFoundError("Route not found").toResponse();
         };
 
         if (!route.auth) return await route.handle(interceptOptions);
 
-        if (!await interceptOptions.authenticator.isAuthenticated(interceptOptions)) return new Response("You're not authorized", {
-            status: 401,
-        });
+        if (!await interceptOptions.authenticator.isAuthenticated(interceptOptions)) return new AuthenticationError().toResponse();
 
         if (!route.adminOnly && !route.fetchUserFromDB) return await route.handle(interceptOptions);
 
         const data = await this.getUserFromRequest(interceptOptions);
-        if (data instanceof Error) return new Response(data.message);
+        if (data instanceof ApiError) return data.toResponse();
 
         const handleData = {
             ...interceptOptions,
@@ -77,9 +78,7 @@ class Router {
 
         if (!route.adminOnly) return await route.handle(handleData);
 
-        if (!data.admin) return new Response("You're not authorized", {
-            status: 401,
-        });
+        if (!data.admin) return new AuthenticationError().toResponse();
         
         return await route.handle(handleData);
     }
