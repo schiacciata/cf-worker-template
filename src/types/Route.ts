@@ -1,12 +1,9 @@
 import Path from "../core/Path";
 import { InterceptOptions } from "./Router";
-import { User } from "./db";
 
 export type HTTPMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
 
-export type RouteHandleOptions = InterceptOptions & {
-    user?: User;
-}
+export type RouteHandleOptions = InterceptOptions & {}
 
 export interface IRoute {
     path: Path,

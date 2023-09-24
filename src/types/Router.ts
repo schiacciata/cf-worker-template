@@ -3,6 +3,7 @@ import { Env } from "./Env"
 import { TConfig } from "./Config"
 import { Logger } from "@schiacciata/logger/index"
 import { BearerAuthenticator } from "@schiacciata/cf-workers-auth"
+import { User } from "./db"
 import Middleware from "@/core/Middleware"
 
 export type RouterOptions = {
@@ -17,4 +18,5 @@ export type InterceptOptions = {
     config: TConfig,
     logger: Logger,
     authenticator: BearerAuthenticator;
+    user?: User;
 }
