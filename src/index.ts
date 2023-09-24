@@ -6,9 +6,11 @@ import { Env } from "./types/Env";
 import { ServerErrorRoute } from "./routes/error/500";
 import { BearerAuthenticator } from "@schiacciata/cf-workers-auth";
 import ServerError from "./errors/server";
+import MiddlewaresHandler from "./handlers/middlewares";
 
 const router = new Router({})
-	.init(new RoutesHandler().handle());
+	.init(new RoutesHandler().handle())
+	.use(new MiddlewaresHandler().handle());
 
 const logger = new Logger({
 	date: false,
