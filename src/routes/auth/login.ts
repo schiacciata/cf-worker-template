@@ -3,26 +3,17 @@ import { RouteHandleOptions } from "@/types/Route";
 import AuthBaseRoute from "./auth.base";
 import { db } from "@/core/db";
 import UserModel from "@/models/user";
-
-type LoginPost = {
-    username?: string;
-    password?: string;
-}
+import { loginPostBody, loginSchema } from "@/schemas/login";
 
 class LoginRoute extends AuthBaseRoute {
     constructor() {
         super('/login');
         this.method = 'POST';
+        this.bodyValidationSchema = loginSchema;
     }
 
     async handle(handleDTO: RouteHandleOptions): Promise<Response> {
-        let body: LoginPost;
-        try {
-            body = await handleDTO.request.json();
-            if (!body.username || !body.password) return this.error('Missing username or password');
-        } catch (error) {
-            return this.error('Invalid body');
-        };
+        const body = handleDTO.validatedBody as loginPostBody;
 
         const user = await new UserModel(db(handleDTO.env))
             .findByCredentials(body.username, body.password);

@@ -1,13 +1,11 @@
+import { kvInsertBody, kvInsertSchema } from "@/schemas/kvinsert";
 import { RouteHandleOptions } from "../../types/Route";
 import KVBaseRoute from "./kv.base";
-
-type PostBody = {
-	value?: string
-}
 
 class KVPostRoute extends KVBaseRoute {
     constructor() {
         super("POST");
+		this.bodyValidationSchema = kvInsertSchema;
     };
 
     async handle(handleDTO: RouteHandleOptions): Promise<Response> {
@@ -15,21 +13,14 @@ class KVPostRoute extends KVBaseRoute {
 		if (!this.kvStorage) return this.error("Could not setup kv", 500);
 
 		const { key } = this.path.params;
-		let data: PostBody = {};
-
-		try {
-			data = await handleDTO.request.json();
-			if (!data.value) return this.error(`Please provide a value`, 400);
-		} catch (error) {
-			return this.error(`Please provide a valid body`, 400);
-		}
+		const body = handleDTO.validatedBody as kvInsertBody;
 
 		this.kvStorage.set({
 			key,
-			value: data.value,
+			value: body.value,
 		});
 
-		return new Response(`Saved value ${data.value} for key ${key}`);
+		return new Response(`Saved value ${body.value} for key ${key}`);
     }
 }
 
