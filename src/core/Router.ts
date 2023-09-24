@@ -1,20 +1,31 @@
 import UserModel from "@/models/user";
-import Route from "../core/Route";
-import { HTTPMethod } from "../types/Route";
-import { InterceptOptions, RouterOptions } from "../types/Router";
+import Route from "@/core/Route";
+import { HTTPMethod } from "@/types/Route";
+import { InterceptOptions, RouterOptions } from "@/types/Router";
 import { db } from "./db";
 import ApiError from "@/errors/api";
 import NotFoundError from "@/errors/notfound";
-import AuthenticationError from "@/errors/authentication";
+import Middleware from "./Middleware";
 
 class Router {
-    routes: Route[];
+    private middlewares: Middleware[];
+    private routes: Route[];
     constructor(options: RouterOptions) {
         this.routes = options.routes || [];
+        this.middlewares = options.middlewares || [];
     };
 
     init(routes: Route[]) {
         this.routes = routes;
+        return this;
+    };
+    
+    use(middleware: Middleware | Middleware[]) {
+        if (Array.isArray(middleware)) {
+            this.middlewares.push(...middleware);
+        } else {
+            this.middlewares.push(middleware);
+        }
         return this;
     };
 
@@ -62,25 +73,22 @@ class Router {
             return new NotFoundError("Route not found").toResponse();
         };
 
-        if (!route.auth) return await route.handle(interceptOptions);
+        interceptOptions.logger.success('Found route', route);
 
-        if (!await interceptOptions.authenticator.isAuthenticated(interceptOptions)) return new AuthenticationError().toResponse();
+        for (const middleware of this.middlewares) {
+            interceptOptions.logger.info('Executing middleware', middleware);
 
-        if (!route.adminOnly && !route.fetchUserFromDB) return await route.handle(interceptOptions);
+            const response = await middleware.handle({
+                route,
+                interceptOptions,
+            });
 
-        const data = await this.getUserFromRequest(interceptOptions);
-        if (data instanceof ApiError) return data.toResponse();
-
-        const handleData = {
-            ...interceptOptions,
-            user: data,
+            if (response) {
+              return response; 
+            };
         };
-
-        if (!route.adminOnly) return await route.handle(handleData);
-
-        if (!data.admin) return new AuthenticationError().toResponse();
         
-        return await route.handle(handleData);
+        return await route.handle(interceptOptions);
     }
 }
 
