@@ -1,3 +1,4 @@
+import ApiError from "@/errors/api";
 import { RouteOptions, HTTPMethod, RouteHandleOptions, IRoute } from "../types/Route";
 import Path from "./Path";
 
@@ -24,10 +25,7 @@ class Route implements IRoute {
     }
 
     error(message: string, status: number = 400): Response {
-        return Response.json({
-            error: message,
-            code: status
-        }, { status })
+        return new ApiError(message, status).toResponse();
     }
 }
 
