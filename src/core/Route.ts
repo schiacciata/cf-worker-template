@@ -1,6 +1,7 @@
 import ApiError from "@/errors/api";
-import { RouteOptions, HTTPMethod, RouteHandleOptions, IRoute } from "../types/Route";
+import { RouteOptions, HTTPMethod, RouteHandleOptions, IRoute } from "@/types/Route";
 import Path from "./Path";
+import { z } from "zod";
 
 class Route implements IRoute {
     path: Path;
@@ -9,6 +10,7 @@ class Route implements IRoute {
     auth: boolean;
     fetchUserFromDB: boolean;
     adminOnly: boolean;
+    bodyValidationSchema: z.ZodTypeAny | null;
     constructor(options: RouteOptions) {
         this.path = options.path;
         this.method = options.method || "GET";
@@ -18,6 +20,8 @@ class Route implements IRoute {
         this.auth = options.auth || false;
         this.fetchUserFromDB = options.fetchUserFromDB || false;
         this.adminOnly = options.adminOnly || false;
+
+        this.bodyValidationSchema = options.bodyValidationSchema || null;
     };
     
     handle(handleDTO: RouteHandleOptions): Promise<Response> | Response {
