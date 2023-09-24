@@ -6,6 +6,8 @@ import { db } from "./db";
 import ApiError from "@/errors/api";
 import NotFoundError from "@/errors/notfound";
 import Middleware from "./Middleware";
+import ServerError from "@/errors/server";
+import { ServerErrorRoute } from "@/routes/error/500";
 
 class Router {
     private middlewares: Middleware[];
@@ -73,7 +75,7 @@ class Router {
             return new NotFoundError("Route not found").toResponse();
         };
 
-        interceptOptions.logger.success('Found route', route);
+        interceptOptions.logger.log('Found route', route);
 
         for (const middleware of this.middlewares) {
             interceptOptions.logger.info('Executing middleware', middleware);
@@ -87,8 +89,23 @@ class Router {
               return response; 
             };
         };
-        
-        return await route.handle(interceptOptions);
+
+        try {
+            const response = await route.handle(interceptOptions);
+            interceptOptions.logger.success('Successfully handled route', route);
+            
+            return response;
+        } catch (error) {
+            interceptOptions.logger.error('Error handling route', route);
+
+            const errorRoute: ServerErrorRoute | undefined = await this.getErrorRoute(500);
+			if (!errorRoute) return new ServerError(error as Error, interceptOptions.config.debug).toResponse();
+
+			return await errorRoute.handle({
+				...interceptOptions,
+				error,
+			});
+        };
     }
 }
 

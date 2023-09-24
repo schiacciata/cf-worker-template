@@ -3,9 +3,7 @@ import config from "./config";
 import Router from "./core/Router";
 import RoutesHandler from "./handlers/routes";
 import { Env } from "./types/Env";
-import { ServerErrorRoute } from "./routes/error/500";
 import { BearerAuthenticator } from "@schiacciata/cf-workers-auth";
-import ServerError from "./errors/server";
 import MiddlewaresHandler from "./handlers/middlewares";
 
 const router = new Router({})
@@ -45,16 +43,6 @@ export default {
 			authenticator,
 		};
 
-		try {
-			return await router.intercept(interceptParams);
-		} catch (error) {
-			const errorRoute: ServerErrorRoute | undefined = await router.getErrorRoute(500);
-			if (!errorRoute) return new ServerError(error as Error, configuration.debug).toResponse();
-
-			return await errorRoute.handle({
-				...interceptParams,
-				error,
-			});
-		};
+		return await router.intercept(interceptParams);
 	},
 };
