@@ -27,7 +27,7 @@ export default {
 			.forEach((s) => logger.debug(s));
 		
 		const configuration = config.getConfig();
-		logger.options.isEnabled = configuration.debug || false;
+		logger.options.isEnabled = configuration.debug;
 
 		const authenticator = new BearerAuthenticator({
 			debug: configuration.debug,
