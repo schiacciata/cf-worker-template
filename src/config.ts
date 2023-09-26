@@ -1,5 +1,6 @@
-import Configuration from "./core/Configuration";
-import { Env } from "./types/Env";
+import Configuration from "@/core/Configuration";
+import utils from "@/core/Utils";
+import { Env } from "@/types/Env";
 
 export class Config extends Configuration {
     constructor() {
@@ -7,9 +8,10 @@ export class Config extends Configuration {
         super({
             JWTSecret: '',
             JWTExpirationInS: 7200,
+            debug: false,
         });
 
-        this.config.JWTSecret = this.randomString(100);
+        this.config.JWTSecret = utils.randomString(100);
     };
 
     public setUp(env: Env): void {
