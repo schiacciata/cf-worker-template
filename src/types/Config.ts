@@ -1,5 +1,5 @@
 export type TConfig = {
     JWTSecret: string;
-    debug?: boolean,
+    debug: boolean,
     JWTExpirationInS: number;
 };
