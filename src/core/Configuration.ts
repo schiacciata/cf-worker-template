@@ -14,16 +14,6 @@ abstract class Configuration {
       return this.config;
     };
 
-    public randomString(length: number): string {
-      let result = '';
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      const charactersLength = characters.length;
-      for (let i = 0; i < length; i++) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return result;
-    };
-
     public print() {
       return Object.entries(this.config)
         .map(([key, value]) => {
