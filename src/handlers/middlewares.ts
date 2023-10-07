@@ -8,19 +8,16 @@ class MiddlewaresHandler extends Handler {
         });
     };
     
-    private isMiddleware(module?: NodeModule) {
-        if (!module || !module.exports) return false;
-        return !!module.exports.middleware && module.exports.middleware instanceof Middleware;
+    private isMiddleware(module: NodeModule) {
+        const { middleware } = module.exports;
+        return !!middleware && middleware instanceof Middleware;
     }
 
     handle(): Middleware[] {
-        return Object.values(require.cache)
-		    .filter((module) => this.isModule(module) && this.isMiddleware(module))
-		    .map((module) => {
-                if (!module) return new Middleware();
-
-                return module.exports.middleware as Middleware;
-            });
+        return this
+            .getModules()
+            .filter((m) => this.isMiddleware(m))
+            .map(({ exports }) => exports.middleware);
     }
 };
 

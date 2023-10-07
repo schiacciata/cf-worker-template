@@ -1,5 +1,4 @@
 import Handler from "../core/Handler";
-import Path from "../core/Path";
 import Route from "../core/Route";
 
 class RoutesHandler extends Handler {
@@ -9,20 +8,16 @@ class RoutesHandler extends Handler {
         });
     };
     
-    private isRoute(module?: NodeModule) {
-        if (!module || !module.exports) return false;
-        return !!module.exports.route && module.exports.route instanceof Route;
+    private isRoute(module: NodeModule) {
+        const { route } = module.exports;
+        return !!route && route instanceof Route;
     }
 
     handle(): Route[] {
-        return Object.values(require.cache)
-		    .filter((module) => this.isModule(module) && this.isRoute(module))
-		    .map((module) => {
-                if (!module) return new Route({ path: new Path()});
-
-                const data: Route = module.exports.route; 
-                return data;
-            });
+        return this
+            .getModules()
+		    .filter((module) => this.isRoute(module))
+            .map(({ exports }) => exports.route);
     }
 };
 
