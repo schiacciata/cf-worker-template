@@ -3,7 +3,7 @@ import { RouteOptions, HTTPMethod, RouteHandleOptions, IRoute } from "@/types/Ro
 import Path from "./Path";
 import { z } from "zod";
 
-class Route implements IRoute {
+abstract class Route implements IRoute {
     path: Path;
     method: HTTPMethod;
     errorCode?: number;
